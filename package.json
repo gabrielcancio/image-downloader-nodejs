@@ -1,0 +1,10 @@
+{
+  "name": "get-images-script",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
