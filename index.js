@@ -78,7 +78,7 @@ class ImageSearcher {
 const imageSearcher = new ImageSearcher({
   url: "https://api.pexels.com/v1/search?query=nature&size=medium&large&per_page=80",
   token: "563492ad6f91700001000001a0517b136ff645c6b87dc4bc443578ac", // 563492ad6f9170000100000102b808ae930c425a9fa3f1d86ef52531
-  pageRange: [1, 2],
+  pageRange: [1, 13],
   limit: 1000
 });
 
