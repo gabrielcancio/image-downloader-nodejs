@@ -1,28 +1,28 @@
+import "dotenv/config";
+
 import axios from "axios";
 import { join } from "path";
 import { createWriteStream } from "fs";
 
-// import responses from "./cache/data.mjs";
+import delay from "./utils/delay.mjs";
 
 
 class ImageSearcher {
   #url;
-  #pageRange;
   #token;
   #limit;
 
   constructor({ url, pageRange, token, limit }) {
-    this.#pageRange = pageRange;
     this.#url = url;
     this.#limit = limit;
     this.#token = token;
   }
 
   // Pegar todas as paginas de registros de imagem
-  async #getImages() {
+  async #getImages(pageRange) {
     const requests = [];
 
-    for(let page = this.#pageRange[0]; page <= this.#pageRange[1]; page++) {
+    for(let page = pageRange[0]; page <= pageRange[1]; page++) {
       const request = axios.get(`${this.#url}&page=${page}`, {
         headers: {
           Authorization: this.#token
@@ -59,9 +59,9 @@ class ImageSearcher {
     response.data.pipe(createWriteStream(join(process.cwd(), "images", imageName)));
   }
 
-  async execute() {
+  async execute(pageRange) {
     // Obter os registros de imagens e formata-los
-    const images = await this.#getImages();
+    const images = await this.#getImages(pageRange);
 
     // Pegar cada um dos registros e realizar o download
     const downloadRequests = images
@@ -77,9 +77,11 @@ class ImageSearcher {
 
 const imageSearcher = new ImageSearcher({
   url: "https://api.pexels.com/v1/search?query=nature&size=medium&large&per_page=80",
-  token: "563492ad6f91700001000001a0517b136ff645c6b87dc4bc443578ac", // 563492ad6f9170000100000102b808ae930c425a9fa3f1d86ef52531
-  pageRange: [1, 13],
+  token: process.env.API_TOKEN,
   limit: 1000
 });
 
-imageSearcher.execute();
+for(let page = 1; page <= 13; page++) {
+  await delay(1000);
+  await imageSearcher.execute([page, page]);
+}
